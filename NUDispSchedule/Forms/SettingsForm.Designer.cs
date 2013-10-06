@@ -33,11 +33,11 @@
             this.savingGroup = new System.Windows.Forms.GroupBox();
             this.groupList = new System.Windows.Forms.ComboBox();
             this.dontSave = new System.Windows.Forms.RadioButton();
-            this.saveDate = new System.Windows.Forms.GroupBox();
-            this.saveDateNo = new System.Windows.Forms.RadioButton();
-            this.saveDateYes = new System.Windows.Forms.RadioButton();
+            this.saveDateOnExit = new System.Windows.Forms.CheckBox();
+            this.saveScheduleDataLocally = new System.Windows.Forms.CheckBox();
+            this.updateFromSite = new System.Windows.Forms.CheckBox();
+            this.updateInterval = new System.Windows.Forms.ComboBox();
             this.savingGroup.SuspendLayout();
-            this.saveDate.SuspendLayout();
             this.SuspendLayout();
             // 
             // saveGroupOnExit
@@ -79,6 +79,7 @@
             // 
             // groupList
             // 
+            this.groupList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.groupList.FormattingEnabled = true;
             this.groupList.Location = new System.Drawing.Point(6, 65);
             this.groupList.Name = "groupList";
@@ -97,60 +98,76 @@
             this.dontSave.UseVisualStyleBackColor = true;
             this.dontSave.CheckedChanged += new System.EventHandler(this.DontSaveCheckedChanged);
             // 
-            // saveDate
+            // saveDateOnExit
             // 
-            this.saveDate.Controls.Add(this.saveDateNo);
-            this.saveDate.Controls.Add(this.saveDateYes);
-            this.saveDate.Location = new System.Drawing.Point(12, 139);
-            this.saveDate.Name = "saveDate";
-            this.saveDate.Size = new System.Drawing.Size(198, 79);
-            this.saveDate.TabIndex = 3;
-            this.saveDate.TabStop = false;
-            this.saveDate.Text = "Запоминать дату после выхода";
+            this.saveDateOnExit.AutoSize = true;
+            this.saveDateOnExit.Checked = true;
+            this.saveDateOnExit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.saveDateOnExit.Location = new System.Drawing.Point(18, 145);
+            this.saveDateOnExit.Name = "saveDateOnExit";
+            this.saveDateOnExit.Size = new System.Drawing.Size(186, 17);
+            this.saveDateOnExit.TabIndex = 3;
+            this.saveDateOnExit.Text = "Запоминать дату посде выхода";
+            this.saveDateOnExit.UseVisualStyleBackColor = true;
+            this.saveDateOnExit.CheckedChanged += new System.EventHandler(this.saveDateOnExit_CheckedChanged);
             // 
-            // saveDateNo
+            // saveScheduleDataLocally
             // 
-            this.saveDateNo.AutoSize = true;
-            this.saveDateNo.Location = new System.Drawing.Point(16, 47);
-            this.saveDateNo.Name = "saveDateNo";
-            this.saveDateNo.Size = new System.Drawing.Size(44, 17);
-            this.saveDateNo.TabIndex = 1;
-            this.saveDateNo.TabStop = true;
-            this.saveDateNo.Text = "Нет";
-            this.saveDateNo.UseVisualStyleBackColor = true;
-            this.saveDateNo.CheckedChanged += new System.EventHandler(this.SaveDateNoCheckedChanged);
+            this.saveScheduleDataLocally.AutoSize = true;
+            this.saveScheduleDataLocally.Checked = true;
+            this.saveScheduleDataLocally.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.saveScheduleDataLocally.Location = new System.Drawing.Point(18, 168);
+            this.saveScheduleDataLocally.Name = "saveScheduleDataLocally";
+            this.saveScheduleDataLocally.Size = new System.Drawing.Size(234, 17);
+            this.saveScheduleDataLocally.TabIndex = 4;
+            this.saveScheduleDataLocally.Text = "Сохранять данные расписания локально";
+            this.saveScheduleDataLocally.UseVisualStyleBackColor = true;
+            this.saveScheduleDataLocally.CheckedChanged += new System.EventHandler(this.saveScheduleDataLocally_CheckedChanged);
             // 
-            // saveDateYes
+            // updateFromSite
             // 
-            this.saveDateYes.AutoSize = true;
-            this.saveDateYes.Location = new System.Drawing.Point(16, 24);
-            this.saveDateYes.Name = "saveDateYes";
-            this.saveDateYes.Size = new System.Drawing.Size(40, 17);
-            this.saveDateYes.TabIndex = 0;
-            this.saveDateYes.TabStop = true;
-            this.saveDateYes.Text = "Да";
-            this.saveDateYes.UseVisualStyleBackColor = true;
-            this.saveDateYes.CheckedChanged += new System.EventHandler(this.SaveDateYesCheckedChanged);
+            this.updateFromSite.AutoSize = true;
+            this.updateFromSite.Checked = true;
+            this.updateFromSite.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.updateFromSite.Location = new System.Drawing.Point(18, 191);
+            this.updateFromSite.Name = "updateFromSite";
+            this.updateFromSite.Size = new System.Drawing.Size(228, 17);
+            this.updateFromSite.TabIndex = 5;
+            this.updateFromSite.Text = "Обновлять расписание с сайта каждые";
+            this.updateFromSite.UseVisualStyleBackColor = true;
+            this.updateFromSite.CheckedChanged += new System.EventHandler(this.updateFromSite_CheckedChanged);
+            // 
+            // updateInterval
+            // 
+            this.updateInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.updateInterval.FormattingEnabled = true;
+            this.updateInterval.Location = new System.Drawing.Point(18, 214);
+            this.updateInterval.Name = "updateInterval";
+            this.updateInterval.Size = new System.Drawing.Size(245, 21);
+            this.updateInterval.TabIndex = 6;
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(288, 238);
-            this.Controls.Add(this.saveDate);
+            this.ClientSize = new System.Drawing.Size(287, 253);
+            this.Controls.Add(this.updateInterval);
+            this.Controls.Add(this.updateFromSite);
+            this.Controls.Add(this.saveScheduleDataLocally);
+            this.Controls.Add(this.saveDateOnExit);
             this.Controls.Add(this.savingGroup);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Настройки";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsFormFormClosed);
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.savingGroup.ResumeLayout(false);
             this.savingGroup.PerformLayout();
-            this.saveDate.ResumeLayout(false);
-            this.saveDate.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -161,8 +178,9 @@
         private System.Windows.Forms.GroupBox savingGroup;
         private System.Windows.Forms.ComboBox groupList;
         private System.Windows.Forms.RadioButton dontSave;
-        private System.Windows.Forms.GroupBox saveDate;
-        private System.Windows.Forms.RadioButton saveDateNo;
-        private System.Windows.Forms.RadioButton saveDateYes;
+        private System.Windows.Forms.CheckBox saveDateOnExit;
+        private System.Windows.Forms.CheckBox saveScheduleDataLocally;
+        private System.Windows.Forms.CheckBox updateFromSite;
+        private System.Windows.Forms.ComboBox updateInterval;
     }
 }

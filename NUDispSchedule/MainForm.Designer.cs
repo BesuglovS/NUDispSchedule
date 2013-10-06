@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
             this.aboutButton = new System.Windows.Forms.Button();
             this.settingsButton = new System.Windows.Forms.Button();
@@ -39,6 +40,7 @@
             this.groupList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
+            this.updateScheduleTimer = new System.Windows.Forms.Timer(this.components);
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -151,6 +153,8 @@
             // 
             this.scheduleView.AllowUserToAddRows = false;
             this.scheduleView.AllowUserToDeleteRows = false;
+            this.scheduleView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.scheduleView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.scheduleView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.scheduleView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scheduleView.Location = new System.Drawing.Point(0, 0);
@@ -158,6 +162,10 @@
             this.scheduleView.ReadOnly = true;
             this.scheduleView.Size = new System.Drawing.Size(462, 337);
             this.scheduleView.TabIndex = 0;
+            // 
+            // updateScheduleTimer
+            // 
+            this.updateScheduleTimer.Tick += new System.EventHandler(this.UpdateScheduleTimerTick);
             // 
             // MainForm
             // 
@@ -193,6 +201,7 @@
         private System.Windows.Forms.Button today;
         private System.Windows.Forms.Button settingsButton;
         private System.Windows.Forms.Button aboutButton;
+        private System.Windows.Forms.Timer updateScheduleTimer;
     }
 }
 

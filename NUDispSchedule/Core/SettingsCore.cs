@@ -18,13 +18,13 @@ namespace NUDispSchedule.Core
 
         public static void ReadSettings()
         {
+            SetDefaultData();
+
             if (!File.Exists("settings.txt"))
-            {
-                SetDefaultData();
+            {                
                 return;
             }
-
-            Data = new Dictionary<string, string>();
+                        
             var sr = new StreamReader("settings.txt");
             string line;
             while((line = sr.ReadLine()) != null)
@@ -36,8 +36,16 @@ namespace NUDispSchedule.Core
                     value = line.Split('=')[1].TrimStart(' ');
                 }
 
-                Data.Add(key, value);
+                if (Data.ContainsKey(key))
+                {
+                    Data[key] = value;
+                }
+                else
+                {
+                    Data.Add(key, value);
+                }
             }
+            sr.Close();
         }
 
         public static void SaveSettings()
@@ -52,7 +60,13 @@ namespace NUDispSchedule.Core
 
         public static void SetDefaultData()
         {
-            Data = new Dictionary<string, string> { { "saveGroup", "Save" }, { "saveDate", "1" } };
+            Data = new Dictionary<string, string> { 
+                { "saveGroup", "Save" }, 
+                { "saveDate", "1" },
+                { "saveScheduleLocally", "1" },
+                { "updateSchedule", "1" },
+                { "updateInterval", "30" }
+            };
         }
     }
 }

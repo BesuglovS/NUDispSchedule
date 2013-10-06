@@ -12,9 +12,19 @@ namespace NUDispSchedule.Forms
     {
         private readonly Schedule _schedule;
 
+        private Dictionary<string, string> updateIntervalDictionary = new Dictionary<string, string> { 
+            {"10 минут", "10"},
+            {"30 минут", "30"},
+            {"1 час", "60"},
+            {"3 часа", "180"},
+            {"6 часов", "360"}
+        };
+
         public SettingsForm(Schedule schedule)
         {
             InitializeComponent();
+
+            updateInterval.Items.AddRange(updateIntervalDictionary.Keys.ToArray());
 
             _schedule = schedule;
         }
@@ -42,9 +52,8 @@ namespace NUDispSchedule.Forms
             if (SettingsCore.Data == null)
             {
                 SettingsCore.SetDefaultData();
-                
-                saveGroupOnExit.Checked = true;
-                saveDateYes.Checked = true;
+
+                DisplaySettings();
 
                 return;
             }
@@ -80,17 +89,53 @@ namespace NUDispSchedule.Forms
                 
                 if (savedDate == "1")
                 {
-                    saveDateYes.Checked = true;
+                    saveDateOnExit.Checked = true;
                 }
                 else
                 {
-                    saveDateNo.Checked = true;
+                    saveDateOnExit.Checked = false;
                 }
+            }
+
+            if (SettingsCore.Data.ContainsKey("saveScheduleLocally"))
+            {
+                if (SettingsCore.Data["saveScheduleLocally"] == "1")
+                {
+                    saveScheduleDataLocally.Checked = true;
+                }
+                else
+                {
+                    saveScheduleDataLocally.Checked = false;
+                }
+            }
+
+            if (SettingsCore.Data.ContainsKey("updateSchedule"))
+            {
+                if (SettingsCore.Data["updateSchedule"] == "1")
+                {
+                    updateFromSite.Checked = true;
+                }
+                else
+                {
+                    updateFromSite.Checked = false;
+                }
+
+            }
+
+            if (SettingsCore.Data.ContainsKey("updateInterval"))
+            {
+                updateInterval.Text = updateIntervalDictionary
+                    .FirstOrDefault(kvp => kvp.Value == SettingsCore.Data["updateInterval"].ToString())
+                    .Key;                    
             }
         }
 
         private void SettingsFormFormClosed(object sender, FormClosedEventArgs e)
         {
+            if (SettingsCore.Data["updateSchedule"] == "1")
+            {
+                SettingsCore.AddOrUpdateSetting("updateInterval", updateIntervalDictionary[updateInterval.Text]);
+            }
             if (SettingsCore.Data["saveGroup"] == "Set Exact")
             {
                 SettingsCore.AddOrUpdateSetting("savedGroup", groupList.Text);
@@ -123,20 +168,19 @@ namespace NUDispSchedule.Forms
             }
         }
 
-        private void SaveDateYesCheckedChanged(object sender, EventArgs e)
+        private void saveDateOnExit_CheckedChanged(object sender, EventArgs e)
         {
-            if (saveDateYes.Checked)
-            {
-                SettingsCore.Data["saveDate"] = "1";
-            }
+            SettingsCore.Data["saveDate"] = (saveDateOnExit.Checked) ? "1" : "0";
         }
 
-        private void SaveDateNoCheckedChanged(object sender, EventArgs e)
+        private void saveScheduleDataLocally_CheckedChanged(object sender, EventArgs e)
         {
-            if (saveDateNo.Checked)
-            {
-                SettingsCore.Data["saveDate"] = "0";
-            }
+            SettingsCore.Data["saveScheduleLocally"] = (saveScheduleDataLocally.Checked) ? "1" : "0";
+        }
+
+        private void updateFromSite_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsCore.Data["updateSchedule"] = (updateFromSite.Checked) ? "1" : "0";
         }
     }
 }

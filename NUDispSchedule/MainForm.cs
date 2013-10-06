@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUDispSchedule.Core;
@@ -11,6 +10,7 @@ using NUDispSchedule.Views;
 using NUDispSchedule.wnu;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace NUDispSchedule
 {
@@ -18,45 +18,134 @@ namespace NUDispSchedule
     {
         private Schedule _schedule;
 
-        public MainForm()
-        {
-            InitializeComponent();
+        private TaskScheduler _uiScheduler;
 
-            SettingsCore.ReadSettings();
+        public MainForm()
+        {   
+            InitializeComponent();
+        }
+
+        private void LoadScheduleOnSettings()
+        {
+            if (SettingsCore.Data.ContainsKey("saveScheduleLocally"))
+            {
+                if ((SettingsCore.Data["saveScheduleLocally"] == "1") && File.Exists("schedule.txt"))
+                {
+                    Schedule schedule = null;
+                    
+                    var splashForm = new SplashScreen();
+                    
+                    var loadTask = Task.Factory.StartNew(() => { schedule = Schedule.LoadScheduleFromFile(); });
+
+                    
+                    loadTask.ContinueWith(
+                        antecedent => splashForm.Close(),
+                        TaskScheduler.FromCurrentSynchronizationContext()
+                    );
+                    
+                    splashForm.ShowDialog();
+
+                    loadTask.Wait();
+                    
+
+                    if (schedule != null)
+                    {
+                        if (_schedule != null)
+                        {
+                            lock (_schedule)
+                            {
+                                _schedule = schedule;
+                            }
+                        }
+                        else
+                        {
+                            _schedule = schedule;
+                        }
+
+                        SwitchInterFace(true);
+                    }
+                }
+            }
         }
 
         private void ApplySettings()
         {
-            if (SettingsCore.Data["saveDate"] == "1")
+            if (SettingsCore.Data.ContainsKey("saveDate"))
             {
-                if (SettingsCore.Data.ContainsKey("savedDate"))
+                if (SettingsCore.Data["saveDate"] == "1")
                 {
-                    var date = SettingsCore.Data["savedDate"];
+                    if (SettingsCore.Data.ContainsKey("savedDate"))
+                    {
+                        var date = SettingsCore.Data["savedDate"];
 
-                    int d, m, y;
-                    int.TryParse(date.Split('.')[0], out d);
-                    int.TryParse(date.Split('.')[1], out m);
-                    int.TryParse(date.Split('.')[2], out y);
+                        int d, m, y;
+                        int.TryParse(date.Split('.')[0], out d);
+                        int.TryParse(date.Split('.')[1], out m);
+                        int.TryParse(date.Split('.')[2], out y);
 
-                    datePicker.Value = new DateTime(y, m, d);
+                        datePicker.Value = new DateTime(y, m, d);
+                    }
                 }
             }
 
-            if ((SettingsCore.Data["saveGroup"] == "Save") || (SettingsCore.Data["saveGroup"] == "Set Exact"))
+            if (SettingsCore.Data.ContainsKey("saveGroup"))
             {
-                var groups = (List<StudentGroup>)groupList.DataSource;
-                if (SettingsCore.Data.ContainsKey("savedGroup"))
+                if ((SettingsCore.Data["saveGroup"] == "Save") || (SettingsCore.Data["saveGroup"] == "Set Exact"))
                 {
-                    var group = groups.FirstOrDefault(g => g.Name == SettingsCore.Data["savedGroup"]);
-                    var index = groups.IndexOf(group);
-                    groupList.SelectedIndex = index;
+                    var groups = (List<StudentGroup>)groupList.DataSource;
+                    if (SettingsCore.Data.ContainsKey("savedGroup"))
+                    {
+                        var group = groups.FirstOrDefault(g => g.Name == SettingsCore.Data["savedGroup"]);
+                        var index = groups.IndexOf(group);
+                        groupList.SelectedIndex = index;
+                    }
                 }
-            }
+            }            
         }
 
         private void MainFormLoad(object sender, EventArgs e)
         {
+            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
             SwitchInterFace(false);
+
+            SettingsCore.ReadSettings();
+
+            LoadScheduleOnSettings();
+
+            if (_schedule != null)
+            {
+                SetGroupListAndDatePicker(_schedule);
+                ApplySettings();
+            }
+
+            StartUploadCycle(true);
+        }
+
+        private void StartUploadCycle(bool syncNOW = false)
+        {
+            if (SettingsCore.Data["updateSchedule"] == "1")
+            {
+                if (syncNOW)
+                {
+                    LoadSchedule();
+                }
+
+                if (SettingsCore.Data.ContainsKey("updateInterval"))
+                {
+                    updateScheduleTimer.Interval = int.Parse(SettingsCore.Data["updateInterval"]) * 60 * 1000;
+                }
+                else
+                {
+                    updateScheduleTimer.Interval = 30*60*1000;
+                }
+
+                updateScheduleTimer.Enabled = true;
+            }
+        }
+
+        private void LoadSchedule()
+        {
             Text = Resources.MainFormScheduleLoadingTitle;
 
             if (!IsConnectedToInternet())
@@ -92,29 +181,44 @@ namespace NUDispSchedule
                 {   
                     var schedule = antecedent.Result;
 
-                    var filteredGroups = schedule.studentGroups
-                        .Where(sg => !sg.Name.Contains('I') && !sg.Name.Contains('-') && !sg.Name.Contains('+'))
-                        .OrderBy(sg => sg.Name)
-                        .ToList();
+                    SetGroupListAndDatePicker(schedule);
+                    
+                    if (_schedule != null)
+                    {
+                        lock (_schedule)
+                        {
+                            _schedule = schedule;
+                        }
+                    }
+                    else
+                    {
+                        _schedule = schedule;
+                    }
 
-                    groupList.DataSource = filteredGroups;
-                    groupList.DisplayMember = "Name";
-                    groupList.ValueMember = "StudentGroupId";
-
-                    datePicker.MinDate = schedule.calendars.Select(c => c.Date).Min();
-                    datePicker.MaxDate = schedule.calendars.Select(c => c.Date).Max();
-
-                    DatePickerValueChanged(null, null);
-
-                    _schedule = schedule;
                     SwitchInterFace(true);
+
                     Text = Resources.MainFormScheduleTitle;
-
-                    ApplySettings();
-
+                    
+                    DatePickerValueChanged(null, null);
                 },
-                TaskScheduler.FromCurrentSynchronizationContext()
+                _uiScheduler
             );
+        }
+
+        private void SetGroupListAndDatePicker(Schedule schedule)
+        {
+            var filteredGroups = schedule.studentGroups
+                .Where(sg => !sg.Name.Contains('I') && !sg.Name.Contains('-') && !sg.Name.Contains('+'))
+                .OrderBy(sg => sg.Name)
+                .ToList();
+
+            groupList.DisplayMember = "Name";
+            groupList.ValueMember = "StudentGroupId";
+            groupList.DataSource = filteredGroups;
+            
+
+            datePicker.MinDate = schedule.calendars.Select(c => c.Date).Min();
+            datePicker.MaxDate = schedule.calendars.Select(c => c.Date).Max();
         }
 
         private void SwitchInterFace(bool enable)
@@ -133,9 +237,13 @@ namespace NUDispSchedule
 
         private void UpdateDailySchedule()
         {
-            if (_schedule == null)
+            if ((_schedule == null) || (groupList.Items.Count == 0))
             {
                 return;
+            }
+            if (groupList.SelectedValue == null)
+            {
+                groupList.SelectedIndex = 0;
             }
             var lList = Utilities.GetDailySchedule(_schedule, (int) groupList.SelectedValue, datePicker.Value);
             var viewList = DailyScheduleGroupLessonView.FromLessonsList(lList, (int) groupList.SelectedValue);
@@ -167,6 +275,10 @@ namespace NUDispSchedule
         {
             var settingsForm = new SettingsForm(_schedule);
             settingsForm.ShowDialog();
+            if (SettingsCore.Data["updateSchedule"] == "1")
+            {
+                StartUploadCycle();
+            }
         }
 
         [DllImport("wininet.dll")]
@@ -190,6 +302,11 @@ namespace NUDispSchedule
                 SettingsCore.AddOrUpdateSetting("savedGroup", groupList.Text);
             }
 
+            if ((SettingsCore.Data["saveScheduleLocally"] == "1") && (_schedule != null))
+            {
+                _schedule.SaveScheduleToFile();                
+            }
+
             SettingsCore.SaveSettings();
         }
 
@@ -197,6 +314,11 @@ namespace NUDispSchedule
         {
             var aboutForm = new AboutForm();
             aboutForm.ShowDialog();
+        }
+
+        private void UpdateScheduleTimerTick(object sender, EventArgs e)
+        {
+            LoadSchedule();
         }
     }
 }

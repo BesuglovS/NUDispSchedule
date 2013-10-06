@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace NUDispSchedule.Forms
 {
@@ -14,6 +15,21 @@ namespace NUDispSchedule.Forms
         public AboutForm()
         {
             InitializeComponent();
+        }
+
+        private void LabelLinkMouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void LabelLinkMouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void LabelLinkClick(object sender, EventArgs e)
+        {
+            Process.Start(((Label)sender).Text);
         }
     }
 }

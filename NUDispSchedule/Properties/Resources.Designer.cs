@@ -63,6 +63,36 @@ namespace NUDispSchedule.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap adt {
+            get {
+                object obj = ResourceManager.GetObject("adt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ajax_loader2 {
+            get {
+                object obj = ResourceManager.GetObject("ajax-loader2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ajax_loader3 {
+            get {
+                object obj = ResourceManager.GetObject("ajax-loader3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap information {
             get {
                 object obj = ResourceManager.GetObject("information", resourceCulture);
@@ -94,16 +124,6 @@ namespace NUDispSchedule.Properties {
         internal static string MainFormScheduleTitle {
             get {
                 return ResourceManager.GetString("MainFormScheduleTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap p16 {
-            get {
-                object obj = ResourceManager.GetObject("p16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
