@@ -18,14 +18,16 @@ namespace NUDispSchedule.Core
 
         public static void ReadSettings()
         {
+            var baseExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+
             SetDefaultData();
 
-            if (!File.Exists("settings.txt"))
+            if (!File.Exists(baseExePath + "\\settings.txt"))
             {                
                 return;
             }
-                        
-            var sr = new StreamReader("settings.txt");
+
+            var sr = new StreamReader(baseExePath + "\\settings.txt");
             string line;
             while((line = sr.ReadLine()) != null)
             {
@@ -49,8 +51,10 @@ namespace NUDispSchedule.Core
         }
 
         public static void SaveSettings()
-        {
-            var sw = new StreamWriter("settings.txt");
+        {   
+            var baseExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+
+            var sw = new StreamWriter(baseExePath + "\\settings.txt");
             foreach (var kvp in Data)
             {
                 sw.WriteLine(kvp.Key + " = " + kvp.Value);
@@ -65,7 +69,10 @@ namespace NUDispSchedule.Core
                 { "saveDate", "1" },
                 { "saveScheduleLocally", "1" },
                 { "updateSchedule", "1" },
-                { "updateInterval", "30" }
+                { "updateInterval", "30" },
+                { "minimizeOnClose", "1" },
+                { "autoStart", "0" },
+                { "showNotifications", "ForSavedGroup"}
             };
         }
     }

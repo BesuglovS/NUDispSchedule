@@ -43,24 +43,24 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::NUDispSchedule.Properties.Resources.adt;
+            this.pictureBox1.Image = global::NUDispSchedule.Properties.Resources.NULogo;
             this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(192, 280);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::NUDispSchedule.Properties.Resources.ajax_loader3;
+            this.pictureBox2.Image = global::NUDispSchedule.Properties.Resources.ajaxloader3;
             this.pictureBox2.Location = new System.Drawing.Point(223, 164);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(124, 128);
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
-            this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // label1
             // 
@@ -71,7 +71,7 @@
             this.label1.Size = new System.Drawing.Size(264, 76);
             this.label1.TabIndex = 2;
             this.label1.Text = "СГОАН";
-            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // label2
             // 
@@ -82,7 +82,7 @@
             this.label2.Size = new System.Drawing.Size(217, 26);
             this.label2.TabIndex = 3;
             this.label2.Text = "расписание занятий";
-            this.label2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.label2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // label3
             // 
@@ -92,8 +92,8 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(119, 26);
             this.label3.TabIndex = 4;
-            this.label3.Text = "версия 0.2";
-            this.label3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.label3.Text = "версия 0.3";
+            this.label3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // label4
             // 
@@ -101,10 +101,10 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label4.Location = new System.Drawing.Point(224, 133);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(200, 26);
+            this.label4.Size = new System.Drawing.Size(197, 26);
             this.label4.TabIndex = 5;
-            this.label4.Text = "(Terrifying Terrorist)";
-            this.label4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.label4.Text = "(Unique University)";
+            this.label4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // wikiSiteLabel
             // 
@@ -117,7 +117,7 @@
             this.wikiSiteLabel.TabIndex = 8;
             this.wikiSiteLabel.Text = "http://wiki.nayanova.edu";
             this.wikiSiteLabel.Click += new System.EventHandler(this.LabelLinkClick);
-            this.wikiSiteLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.wikiSiteLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             this.wikiSiteLabel.MouseEnter += new System.EventHandler(this.LabelLinkMouseEnter);
             this.wikiSiteLabel.MouseLeave += new System.EventHandler(this.LabelLinkMouseLeave);
             // 
@@ -132,7 +132,7 @@
             this.webSiteLink.TabIndex = 7;
             this.webSiteLink.Text = "https://github.com/BesuglovS/NUDispSchedule/wiki";
             this.webSiteLink.Click += new System.EventHandler(this.LabelLinkClick);
-            this.webSiteLink.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.webSiteLink.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             this.webSiteLink.MouseEnter += new System.EventHandler(this.LabelLinkMouseEnter);
             this.webSiteLink.MouseLeave += new System.EventHandler(this.LabelLinkMouseLeave);
             // 
@@ -145,7 +145,7 @@
             this.label5.Size = new System.Drawing.Size(102, 20);
             this.label5.TabIndex = 6;
             this.label5.Text = "Веб сайты:";
-            this.label5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.label5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             // 
             // SplashScreen
             // 
@@ -166,7 +166,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "SplashScreen";
             this.TopMost = true;
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.Load += new System.EventHandler(this.SplashScreenLoad);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

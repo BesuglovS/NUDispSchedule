@@ -22,7 +22,7 @@ namespace NUDispSchedule.Main
         public List<TeacherForDiscipline> teacherForDisciplines { get; set; }
         public List<LessonLogEvent> lessonLogEvents { get; set; }
         public List<ConfigOption> configOptions { get; set; }
-
+        
         public FileSaveSchedule ToFileSchedule()
         {
             var result = new FileSaveSchedule
@@ -408,8 +408,13 @@ namespace NUDispSchedule.Main
             return result;
         }
 
-        public void SaveScheduleToFile(string filename = "schedule.txt")
+        public void SaveScheduleToFile(string filename = "")
         {
+            if (filename == "")
+            {
+                var baseExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+                filename = baseExePath + "\\schedule.txt";
+            }
             var sw = new StreamWriter(filename);
             var jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer { MaxJsonLength = 10000000 };
             var fileSchedule = ToFileSchedule();
@@ -418,8 +423,13 @@ namespace NUDispSchedule.Main
             sw.Close();
         }
 
-        static public Schedule LoadScheduleFromFile(string filename = "schedule.txt")
+        static public Schedule LoadScheduleFromFile(string filename = "")
         {
+            if (filename == "")
+            {
+                var baseExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+                filename = baseExePath + "\\schedule.txt";
+            }
             var sr = new StreamReader(filename);
             var scheduleString = sr.ReadLine() ?? "";
             sr.Close();

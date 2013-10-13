@@ -31,16 +31,16 @@ namespace NUDispSchedule.Core
 
             // LessonId
             view.Columns[0].Visible = false;
-            view.Columns[0].Width = 0;
+            view.Columns[0].Width = 0;            
             
             // Ring
-            view.Columns[1].Width = Percent(12, view.Width);
+            view.Columns[1].Width = 56;
             view.Columns[1].DefaultCellStyle.Font = new Font(view.DefaultCellStyle.Font.FontFamily, 14);
-            view.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            view.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;            
 
             // LessonSummary
-            view.Columns[2].Width = Percent(88, view.Width);
-            view.Columns[2].Width = view.Width - view.Columns[1].Width - 20;
+            // view.Columns[2].Width = Percent(88, view.Width);
+            view.Columns[2].Width = view.Width - view.Columns[1].Width - 20;            
         }
     }
 }

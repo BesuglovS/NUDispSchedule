@@ -73,9 +73,9 @@ namespace NUDispSchedule.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ajax_loader2 {
+        internal static System.Drawing.Bitmap ajaxloader2 {
             get {
-                object obj = ResourceManager.GetObject("ajax-loader2", resourceCulture);
+                object obj = ResourceManager.GetObject("ajaxloader2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,49 @@ namespace NUDispSchedule.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ajax_loader3 {
+        internal static System.Drawing.Bitmap ajaxloader3 {
             get {
-                object obj = ResourceManager.GetObject("ajax-loader3", resourceCulture);
+                object obj = ResourceManager.GetObject("ajaxloader3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AuditoriumChanged {
+            get {
+                object obj = ResourceManager.GetObject("AuditoriumChanged", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap diff {
+            get {
+                object obj = ResourceManager.GetObject("diff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon diffIcon {
+            get {
+                object obj = ResourceManager.GetObject("diffIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap exit {
+            get {
+                object obj = ResourceManager.GetObject("exit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -101,6 +141,63 @@ namespace NUDispSchedule.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon information1 {
+            get {
+                object obj = ResourceManager.GetObject("information1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LessonAdded {
+            get {
+                object obj = ResourceManager.GetObject("LessonAdded", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LessonRemoved {
+            get {
+                object obj = ResourceManager.GetObject("LessonRemoved", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новых изменений в расписании: .
+        /// </summary>
+        internal static string MainForm_ChackForAndDisplayUpdateCount_ChangesCount_ToolTipText {
+            get {
+                return ResourceManager.GetString("MainForm_ChackForAndDisplayUpdateCount_ChangesCount_ToolTipText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Программа продолжает работать в фоновом режиме..
+        /// </summary>
+        internal static string MainForm_MinimizeToTray_ToolTipText_KeepRunning {
+            get {
+                return ResourceManager.GetString("MainForm_MinimizeToTray_ToolTipText_KeepRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Расписание СГОАН.
+        /// </summary>
+        internal static string MainForm_MinimizeToTray_ToolTipTitle {
+            get {
+                return ResourceManager.GetString("MainForm_MinimizeToTray_ToolTipTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to СГОАН - расписание занятий (нет подключения).
         /// </summary>
         internal static string MainFormNoInternetTitle {
@@ -110,7 +207,7 @@ namespace NUDispSchedule.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to СГОАН - расписание занятий (загрузка ...).
+        ///   Looks up a localized string similar to СГОАН - расписание занятий (обновление ...).
         /// </summary>
         internal static string MainFormScheduleLoadingTitle {
             get {
@@ -130,9 +227,98 @@ namespace NUDispSchedule.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap NULogo {
+            get {
+                object obj = ResourceManager.GetObject("NULogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon NULogo1 {
+            get {
+                object obj = ResourceManager.GetObject("NULogo1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon NULogo2 {
+            get {
+                object obj = ResourceManager.GetObject("NULogo2", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap settings {
             get {
                 object obj = ResourceManager.GetObject("settings", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon settings1 {
+            get {
+                object obj = ResourceManager.GetObject("settings1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap teacher1 {
+            get {
+                object obj = ResourceManager.GetObject("teacher1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Время.
+        /// </summary>
+        internal static string TeacherSchedule_FormatView_Time {
+            get {
+                return ResourceManager.GetString("TeacherSchedule_FormatView_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap update24 {
+            get {
+                object obj = ResourceManager.GetObject("update24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap update24sepia {
+            get {
+                object obj = ResourceManager.GetObject("update24sepia", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap window_new {
+            get {
+                object obj = ResourceManager.GetObject("window_new", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

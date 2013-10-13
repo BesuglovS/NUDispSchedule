@@ -19,6 +19,9 @@ namespace NUDispSchedule.Main
             Expelled = expelled;
         }
 
+        public string FIO { get { return F + " " + I + " " + O; } }
+        
+
         public int StudentId { get; set; }
         public string F { get; set; }
         public string I { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUDispSchedule.Core;
@@ -17,19 +18,47 @@ namespace NUDispSchedule
     public partial class MainForm : Form
     {
         private Schedule _schedule;
-
         private TaskScheduler _uiScheduler;
-
+        
         public MainForm()
         {   
             InitializeComponent();
+        }
+
+        private void MainFormLoad(object sender, EventArgs e)
+        {
+            Icon = Resources.NULogo2;
+
+            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            
+            SwitchInterFace(false);
+
+            SettingsCore.ReadSettings();
+
+            LoadScheduleOnSettings();
+
+            if (_schedule != null)
+            {
+                SetGroupListAndDatePicker(_schedule);
+                ApplySettings();
+            }
+
+            StartUploadCycle(true);
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Contains("-Startup"))
+            {
+                MinimizeToTray();
+            }
         }
 
         private void LoadScheduleOnSettings()
         {
             if (SettingsCore.Data.ContainsKey("saveScheduleLocally"))
             {
-                if ((SettingsCore.Data["saveScheduleLocally"] == "1") && File.Exists("schedule.txt"))
+                var baseExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+
+                if ((SettingsCore.Data["saveScheduleLocally"] == "1") && File.Exists(baseExePath + "\\schedule.txt"))
                 {
                     Schedule schedule = null;
                     
@@ -42,8 +71,12 @@ namespace NUDispSchedule
                         antecedent => splashForm.Close(),
                         TaskScheduler.FromCurrentSynchronizationContext()
                     );
-                    
-                    splashForm.ShowDialog();
+
+                    string[] args = Environment.GetCommandLineArgs();
+                    if (!args.Contains("-Startup"))
+                    {
+                        splashForm.ShowDialog();
+                    }                    
 
                     loadTask.Wait();
                     
@@ -101,26 +134,7 @@ namespace NUDispSchedule
                     }
                 }
             }            
-        }
-
-        private void MainFormLoad(object sender, EventArgs e)
-        {
-            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
-            SwitchInterFace(false);
-
-            SettingsCore.ReadSettings();
-
-            LoadScheduleOnSettings();
-
-            if (_schedule != null)
-            {
-                SetGroupListAndDatePicker(_schedule);
-                ApplySettings();
-            }
-
-            StartUploadCycle(true);
-        }
+        }        
 
         private void StartUploadCycle(bool syncNOW = false)
         {
@@ -133,7 +147,9 @@ namespace NUDispSchedule
 
                 if (SettingsCore.Data.ContainsKey("updateInterval"))
                 {
-                    updateScheduleTimer.Interval = int.Parse(SettingsCore.Data["updateInterval"]) * 60 * 1000;
+                    int interval;
+                    int.TryParse(SettingsCore.Data["updateInterval"], out interval);
+                    updateScheduleTimer.Interval = interval * 60 * 1000;
                 }
                 else
                 {
@@ -147,6 +163,12 @@ namespace NUDispSchedule
         private void LoadSchedule()
         {
             Text = Resources.MainFormScheduleLoadingTitle;
+            updateSchedule.Enabled = false;
+            updateSchedule.Image = Resources.update24sepia;            
+            refreshButtonTooltip.Active = false;
+            обновитьРасписниеToolStripMenuItem.Enabled = false;
+            обновитьРасписниеToolStripMenuItem.Text = "Идёт обновление ...";
+            обновитьРасписниеToolStripMenuItem.Image = Resources.update24sepia;
 
             if (!IsConnectedToInternet())
             {
@@ -200,13 +222,133 @@ namespace NUDispSchedule
                     Text = Resources.MainFormScheduleTitle;
                     
                     DatePickerValueChanged(null, null);
+
+                    ChackForAndDisplayUpdateCount();
+
+                    updateSchedule.Enabled = true;
+                    updateSchedule.Image = Resources.update24;
+                    refreshButtonTooltip.Active = true;
+                    refreshButtonTooltip.SetToolTip(updateSchedule, "Обновить расписание");
+                    обновитьРасписниеToolStripMenuItem.Enabled = true;
+                    обновитьРасписниеToolStripMenuItem.Text = "Обновить расписание";
+                    обновитьРасписниеToolStripMenuItem.Image = Resources.update24;
+                    
                 },
                 _uiScheduler
             );
         }
 
+        private void ChackForAndDisplayUpdateCount()
+        {
+            if (SettingsCore.Data.ContainsKey("showNotifications") &&
+                (SettingsCore.Data["showNotifications"] == "DontShow"))
+            {
+                return;
+            }
+
+            if (SettingsCore.Data.ContainsKey("LastDisplayedEventId"))
+            {
+                int lastDisplayedId;
+                int.TryParse(SettingsCore.Data["LastDisplayedEventId"], out lastDisplayedId);
+
+                var updateEvents = new List<LessonLogEvent>();
+
+                if (SettingsCore.Data.ContainsKey("showNotifications"))
+                {
+                    StudentGroup group;
+                    switch (SettingsCore.Data["showNotifications"])
+                    {
+                        case "ForSavedGroup":
+                            group = _schedule.studentGroups
+                                .FirstOrDefault(g => g.Name == SettingsCore.Data["savedGroup"]);
+                            if (group != null)
+                            {
+                                updateEvents = _schedule.lessonLogEvents
+                                    .Where(e => ((e.LessonLogEventId > lastDisplayedId) &&
+                                                 ((e.OldLesson != null && 
+                                                  e.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.
+                                                      StudentGroupId == group.StudentGroupId) ||
+                                                  (e.NewLesson != null && 
+                                                  e.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.
+                                                      StudentGroupId == group.StudentGroupId))))
+                                    .ToList();
+                            }
+                            break;
+                        case "ForChoosenGroup":
+                            if (SettingsCore.Data.ContainsKey("notificationId"))
+                            {
+                                group = _schedule.studentGroups
+                                    .FirstOrDefault(g =>
+                                                    g.StudentGroupId.ToString(CultureInfo.InvariantCulture) ==
+                                                    SettingsCore.Data["notificationId"]);
+                                if (group != null)
+                                {
+                                    updateEvents = _schedule.lessonLogEvents
+                                        .Where(e => ((e.LessonLogEventId > lastDisplayedId) &&
+                                                     ((e.OldLesson != null && 
+                                                      e.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.
+                                                          StudentGroupId == group.StudentGroupId) ||
+                                                      (e.NewLesson != null &&
+                                                      e.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.
+                                                          StudentGroupId == group.StudentGroupId))))
+                                        .ToList();
+
+                                }
+                            }
+                            break;
+                        case "ForChoosenStudent":
+                            if (SettingsCore.Data.ContainsKey("notificationId"))
+                            {
+                                var student = _schedule.students
+                                    .FirstOrDefault(s =>
+                                                    s.StudentId.ToString(CultureInfo.InvariantCulture) ==
+                                                    SettingsCore.Data["notificationId"]);
+                                if (student != null)
+                                {
+                                    var groupIdList = _schedule.studentsInGroups
+                                        .Where(sig => sig.Student.StudentId.ToString(CultureInfo.InvariantCulture) ==
+                                                      SettingsCore.Data["notificationId"])
+                                        .Select(sig => sig.StudentGroup.StudentGroupId)
+                                        .ToList();
+
+                                    updateEvents = _schedule.lessonLogEvents
+                                        .Where(e => ((e.LessonLogEventId > lastDisplayedId) &&
+                                                     ((e.OldLesson != null &&
+                                                        groupIdList.Contains(
+                                                            e.OldLesson.TeacherForDiscipline.Discipline.
+                                                                StudentGroup.StudentGroupId)) ||
+                                                      (e.NewLesson != null &&
+                                                        groupIdList.Contains(
+                                                            e.NewLesson.TeacherForDiscipline.Discipline.
+                                                                StudentGroup.StudentGroupId)))))
+                                        .ToList();
+
+                                }
+                            }
+                            break;
+                            
+                    }
+                }
+                
+                if (updateEvents.Count != 0)
+                {
+                    trayIcon.Visible = true;
+                    trayIcon.Tag = "ChangesCount";
+                    trayIcon.ShowBalloonTip(
+                        1000,
+                        Resources.MainForm_MinimizeToTray_ToolTipTitle,
+                        Resources.MainForm_ChackForAndDisplayUpdateCount_ChangesCount_ToolTipText + 
+                        updateEvents.Count,
+                        ToolTipIcon.Info
+                        );
+                }
+            }
+        }
+
         private void SetGroupListAndDatePicker(Schedule schedule)
         {
+            var groupName = groupList.Text;
+
             var filteredGroups = schedule.studentGroups
                 .Where(sg => !sg.Name.Contains('I') && !sg.Name.Contains('-') && !sg.Name.Contains('+'))
                 .OrderBy(sg => sg.Name)
@@ -215,7 +357,8 @@ namespace NUDispSchedule
             groupList.DisplayMember = "Name";
             groupList.ValueMember = "StudentGroupId";
             groupList.DataSource = filteredGroups;
-            
+
+            groupList.Text = groupName;            
 
             datePicker.MinDate = schedule.calendars.Select(c => c.Date).Min();
             datePicker.MaxDate = schedule.calendars.Select(c => c.Date).Max();
@@ -228,6 +371,8 @@ namespace NUDispSchedule
             today.Enabled = enable;
             tomorrow.Enabled = enable;
             settingsButton.Enabled = enable;
+            changes.Enabled = enable;
+            teacherSchedule.Enabled = enable;
         }
 
         private void DatePickerValueChanged(object sender, EventArgs e)
@@ -254,6 +399,22 @@ namespace NUDispSchedule
         private void MainFormResize(object sender, EventArgs e)
         {
             FormatMainView.DailyScheduleView(scheduleView, this);
+            if (WindowState == FormWindowState.Minimized)
+            {
+                MinimizeToTray();
+            }
+        }
+
+        private void MinimizeToTray()
+        {
+            WindowState = FormWindowState.Minimized;
+            trayIcon.Tag = "StillHere";
+            trayIcon.Visible = true;
+            trayIcon.BalloonTipIcon = ToolTipIcon.Info;
+            trayIcon.BalloonTipTitle = Resources.MainForm_MinimizeToTray_ToolTipTitle;
+            trayIcon.BalloonTipText = Resources.MainForm_MinimizeToTray_ToolTipText_KeepRunning;
+            trayIcon.ShowBalloonTip(100);
+            ShowInTaskbar = false;            
         }
 
         private void TodayClick(object sender, EventArgs e)
@@ -273,7 +434,7 @@ namespace NUDispSchedule
 
         private void SettingsClick(object sender, EventArgs e)
         {
-            var settingsForm = new SettingsForm(_schedule);
+            var settingsForm = new SettingsForm(this, _schedule);
             settingsForm.ShowDialog();
             if (SettingsCore.Data["updateSchedule"] == "1")
             {
@@ -292,6 +453,13 @@ namespace NUDispSchedule
 
         private void MainFormFormClosed(object sender, FormClosedEventArgs e)
         {
+            OnApplicationExit();
+        }
+
+        private void OnApplicationExit()
+        {
+            trayIcon.Visible = false;
+
             if (SettingsCore.Data["saveDate"] == "1")
             {
                 SettingsCore.AddOrUpdateSetting("savedDate", datePicker.Value.ToString("dd.MM.yyyy"));
@@ -304,7 +472,10 @@ namespace NUDispSchedule
 
             if ((SettingsCore.Data["saveScheduleLocally"] == "1") && (_schedule != null))
             {
-                _schedule.SaveScheduleToFile();                
+                _schedule.SaveScheduleToFile();
+                
+                var maxEventId = _schedule.lessonLogEvents.Select(lle => lle.LessonLogEventId).Max();
+                SettingsCore.AddOrUpdateSetting("LastDisplayedEventId", maxEventId.ToString(CultureInfo.InvariantCulture));
             }
 
             SettingsCore.SaveSettings();
@@ -312,13 +483,88 @@ namespace NUDispSchedule
 
         private void AboutButtonClick(object sender, EventArgs e)
         {
-            var aboutForm = new AboutForm();
-            aboutForm.ShowDialog();
+            var aboutForm = new AboutForm(this);
+            aboutForm.ShowDialog(this);
         }
 
         private void UpdateScheduleTimerTick(object sender, EventArgs e)
         {
             LoadSchedule();
+        }
+
+        private void ChangesClick(object sender, EventArgs e)
+        {
+            var changesForm = new Changes(this, _schedule, (int)groupList.SelectedValue);
+            changesForm.ShowDialog();
+        }
+
+        private void MainFormFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (SettingsCore.Data.ContainsKey("minimizeOnClose") && SettingsCore.Data["minimizeOnClose"] == "1")
+            {
+                e.Cancel = true;
+                MinimizeToTray();
+            }
+        }
+
+        private void TrayIconDoubleClick(object sender, EventArgs e)
+        {
+            trayIcon.Visible = false;
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
+        }
+
+        private void ВыходToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            OnApplicationExit();
+            Application.Exit();
+        }
+
+        private void TrayIconBalloonTipClicked(object sender, EventArgs e)
+        {
+            if ((trayIcon.Tag.ToString() == "ChangesCount") &&
+                (SettingsCore.Data.ContainsKey("showNotifications") &&
+                 SettingsCore.Data["showNotifications"] == "ForChoosenGroup") &&
+                SettingsCore.Data.ContainsKey("notificationId"))
+            {
+                int groupId;
+                int.TryParse(SettingsCore.Data["notificationId"], out groupId);
+                var changesForm = new Changes(this, _schedule, groupId);
+                changesForm.ShowDialog();
+            }
+        }
+
+        private void UpdateScheduleClick(object sender, EventArgs e)
+        {
+            LoadSchedule();
+        }
+
+        private void ОбновитьРасписниеToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            LoadSchedule();
+        }
+
+        private void ScheduleViewSelectionChanged(object sender, EventArgs e)
+        {
+            scheduleView.ClearSelection();
+        }
+
+        private void TeacherScheduleClick(object sender, EventArgs e)
+        {
+            var teacherScheduleForm = new TeacherSchedule(this, _schedule);
+            teacherScheduleForm.ShowDialog();
+        }
+
+        private void ИзмененияToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            var changesForm = new Changes(this, _schedule, (int)groupList.SelectedValue);
+            changesForm.ShowDialog();
+        }
+
+        private void РасписаниеПреподавателяToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            var teacherScheduleForm = new TeacherSchedule(this, _schedule);
+            teacherScheduleForm.ShowDialog();
         }
     }
 }
